@@ -14,12 +14,17 @@ Este proyecto utiliza algoritmos de refuerzo como **Q-Learning** y **SARSA** par
 Puedes añadir tus propios laberintos creando un archivo `.txt` en la carpeta `resources` con la siguiente estructura:
 
 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-1 3 0 0 0 0 0 0 0 0 0 1 1 1 1 1
-1 0 1 1 1 1 1 1 0 1 0 1 0 0 0 1
-1 0 0 0 0 0 0 1 0 1 0 1 1 1 0 1
-1 0 1 1 1 0 0 1 0 1 0 0 0 0 2 1
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+`1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1`
+
+`1 3 0 0 0 0 0 0 0 0 0 1 1 1 1 1`
+
+`1 0 1 1 1 1 1 1 0 1 0 1 0 0 0 1`
+
+`1 0 0 0 0 0 0 1 0 1 0 1 1 1 0 1`
+
+`1 0 1 1 1 0 0 1 0 1 0 0 0 0 2 1`
+
+`1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1`
 
 ### Leyenda:
 - `1` = Pared  
