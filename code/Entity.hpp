@@ -22,7 +22,7 @@ public:
 
 	void SetPosition(int newX, int newY);
 
-	virtual void Update(Map& _map) {};
+	virtual void Update(Map& _map, std::vector<Entity*>& entities) {};
 
 };
 

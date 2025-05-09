@@ -65,7 +65,7 @@ int main()
         render.RenderScene(&map, entities, buffer);
 
         // Limpiar solo el área de la escena (opcional)
-        std::cout << "\033[H\033[J";  // Esto borra la consola, pero mantén la generación
+        std::cout << "\033[H\033[J";  // Esto borra la consola
 
         std::cout << "Goals: " << goals << " | Generacion: " << generation << " | Pasos: " << controller.steps << " | Epsilon: " << controller.GetEpsilon() << std::endl;
         
@@ -114,7 +114,7 @@ int main()
 
         for (auto entiti : entities)
         {
-            entiti->Update(map);
+            entiti->Update(map, entities);
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

@@ -134,6 +134,7 @@
     <ClInclude Include="..\..\..\code\Map.hpp" />
     <ClInclude Include="..\..\..\code\MovementComponent.hpp" />
     <ClInclude Include="..\..\..\code\Player.hpp" />
+    <ClInclude Include="..\..\..\code\Q-Learning.hpp" />
     <ClInclude Include="..\..\..\code\RandomController.hpp" />
     <ClInclude Include="..\..\..\code\Render.hpp" />
     <ClInclude Include="..\..\..\code\Sarsa.hpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="..\..\..\code\Map.cpp" />
     <ClCompile Include="..\..\..\code\MovementComponent.cpp" />
     <ClCompile Include="..\..\..\code\Player.cpp" />
+    <ClCompile Include="..\..\..\code\Q-Learning.cpp" />
     <ClCompile Include="..\..\..\code\RandomController.cpp" />
     <ClCompile Include="..\..\..\code\Render.cpp" />
     <ClCompile Include="..\..\..\code\Sarsa.cpp" />

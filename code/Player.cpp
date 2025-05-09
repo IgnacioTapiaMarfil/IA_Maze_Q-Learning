@@ -19,7 +19,7 @@ Player::Player(Map& _map) : Entity(0,0, _map), movementComponent(*this, _map)
     std::cerr << "Start tile not found! PlayerStartSet to (0,0)\n";
 }
 
-void Player::Update(Map& _map)
+void Player::Update(Map& _map, std::vector<Entity*>& entities)
 {
     if (controller) controller->DoAction(*this, _map);
 

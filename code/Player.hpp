@@ -17,9 +17,9 @@ private:
 public:
 	Player(Map& _map);
 
-	void SetController(Controller* c) { controller = c; }
+	void SetController(Controller* c) { controller = c; } Controller* GetController() const { return controller; }
 
-	void Update(Map& _map) override;
+	void Update(Map& _map, std::vector<Entity*>& entities) override;
 
 	MovementComponent GetMovementComponent() { return movementComponent; }
 

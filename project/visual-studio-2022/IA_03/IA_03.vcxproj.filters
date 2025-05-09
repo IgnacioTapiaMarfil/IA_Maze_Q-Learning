@@ -48,6 +48,9 @@
     <ClInclude Include="..\..\..\code\Sarsa.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\code\Q-Learning.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\code\Entity.cpp">
@@ -84,6 +87,9 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\code\Sarsa.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\code\Q-Learning.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
