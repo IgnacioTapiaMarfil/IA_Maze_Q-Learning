@@ -1,8 +1,8 @@
-#include "Sarsa.hpp"
+#include "Q-Learning.hpp"
 #include <iostream>
 
 
-void SarsaController::DoAction(Player& _player, Map& _map)
+void QLearningController::DoAction(Player& _player, Map& _map)
 {
     int x = _player.GetX();
     int y = _player.GetY();
@@ -16,15 +16,15 @@ void SarsaController::DoAction(Player& _player, Map& _map)
 
     int newX = x, newY = y;
 
-    switch (action) 
+    switch (action)
     {
-        case Action::Up:    moved = movement.MoveUp();    if (moved) newY--; break;
+    case Action::Up:    moved = movement.MoveUp();    if (moved) newY--; break;
 
-        case Action::Down:  moved = movement.MoveDown();  if (moved) newY++; break;
+    case Action::Down:  moved = movement.MoveDown();  if (moved) newY++; break;
 
-        case Action::Left:  moved = movement.MoveLeft();  if (moved) newX--; break;
+    case Action::Left:  moved = movement.MoveLeft();  if (moved) newX--; break;
 
-        case Action::Right: moved = movement.MoveRight(); if (moved) newX++; break;
+    case Action::Right: moved = movement.MoveRight(); if (moved) newX++; break;
     }
 
     State nextState = { newX, newY };
@@ -35,9 +35,9 @@ void SarsaController::DoAction(Player& _player, Map& _map)
         reward = movementReward;
     else
         reward = colisionReward;
-    
+
     if (steps >= maxSteps)
-        reward -=100;
+        reward -= 100;
 
     if (_map.GetTile(newX, newY) == TileType::Goal)
         reward += goalReward;
@@ -48,11 +48,17 @@ void SarsaController::DoAction(Player& _player, Map& _map)
         std::cout << "Penalización por repetir posición\n";
     }
 
-    // Elegir siguiente acción según épsilon-greedy desde el nuevo estado
-    Action nextAction = ChooseAction(nextState);
-
     float currentQ = GetQValue(state, action);
-    float nextQ = GetQValue(nextState, nextAction);
+
+    float nextQ = -1e9;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        Action a = static_cast<Action>(i);
+        float q = GetQValue(nextState, a);
+        if (q > nextQ)
+            nextQ = q;
+    }
 
     float tdError = reward + discountRate * nextQ - currentQ;
     float updatedQ = currentQ + learningRate * tdError;
@@ -65,13 +71,13 @@ void SarsaController::DoAction(Player& _player, Map& _map)
 
 }
 
-Action SarsaController::ChooseAction(State _state)
+Action QLearningController::ChooseAction(State _state)
 {
 
     if (dist(rng) < epsiolon)
     {
         int random = rand() % 4;
-        std::cout << "random \n" ;
+        std::cout << "random \n";
         return static_cast<Action>(random);
     }
 
@@ -96,7 +102,7 @@ Action SarsaController::ChooseAction(State _state)
     return bestAction;
 }
 
-float SarsaController::GetQValue(const State& _state, Action _action)
+float QLearningController::GetQValue(const State& _state, Action _action)
 {
     auto key = std::make_pair(_state, _action);
 
@@ -107,7 +113,7 @@ float SarsaController::GetQValue(const State& _state, Action _action)
     return qTable[key];
 }
 
-void SarsaController::SetQValue(const State& _state, Action _action, float value)
+void QLearningController::SetQValue(const State& _state, Action _action, float value)
 {
     auto key = std::make_pair(_state, _action);
     qTable[key] = value;

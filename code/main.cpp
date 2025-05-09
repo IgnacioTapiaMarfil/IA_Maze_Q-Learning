@@ -25,6 +25,7 @@ int goals = 0;
 int main() 
 {
     const std::string mapSrc = "../../../resources/Map_02";
+
     std::vector<std::vector<int>> mapGrid = FileReader::MapCharger(mapSrc);
 
     if (mapGrid.empty())
@@ -116,7 +117,7 @@ int main()
             entiti->Update(map);
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(0));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         if (generation >= 300)
             running = false;
