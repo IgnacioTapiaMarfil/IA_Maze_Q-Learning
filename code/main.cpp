@@ -1,4 +1,3 @@
-
 #include <vector>
 #include <chrono>
 #include <thread>
@@ -12,11 +11,13 @@
 #include "Treasure.hpp"
 #include "RandomController.hpp"
 #include "Sarsa.hpp"
+#include "Q-Learning.hpp"
 #include "FileReader.hpp"
 
 bool running = false;
 
 void CreateEntity(Map& _map, std::vector<std::vector<int>> _mapGrid, std::vector<Entity*>& entities);
+void Reset(Map& _map, Player* _player);
 
 int generation = 0;
 
@@ -43,7 +44,7 @@ int main()
 
     int maxSteps = 5000;
 
-    SarsaController controller(0.3f,0.96f,2000.0f,-0.1f,0.f,maxSteps);
+    QLearningController controller(0.3f,0.96f,2000.0f,-0.1f,-1.f,maxSteps);
 
     controller.LoadQTable(mapSrc);
 
@@ -72,19 +73,11 @@ int main()
         // Imprimimos el contenido de la escena
         std::cout << buffer.str();
 
-        if (map.GetTile(player1.GetX(), player1.GetY()) == TileType::Goal)
+        if (player1.GetArrive())
         {
-            for (int y = 0; y < map.GetHeight(); ++y)
-            {
-                for (int x = 0; x < map.GetWidth(); ++x)
-                {
-                    if (map.GetTile(x, y) == TileType::Start)
-                    {
-                        player1.SetPosition(x, y);
-                        controller.steps = 0;
-                    }
-                }
-            }
+            player1.SetArrive(false);
+
+            Reset(map, &player1);
 
             generation++;
             goals++;
@@ -93,21 +86,12 @@ int main()
             {
                 controller.SetEpsilon(controller.GetEpsilon() * 0.9f);
             }
-
         }
-        else if (controller.steps > maxSteps)
+        else if (player1.GetDead())
         {
-            for (int y = 0; y < map.GetHeight(); ++y)
-            {
-                for (int x = 0; x < map.GetWidth(); ++x)
-                {
-                    if (map.GetTile(x, y) == TileType::Start)
-                    {
-                        player1.SetPosition(x, y);
-                        controller.steps = 0;
-                    }
-                }
-            }
+            player1.SetDead(false);
+
+            Reset(map, &player1);
 
             generation++;
         }
@@ -117,7 +101,7 @@ int main()
             entiti->Update(map, entities);
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(0));
 
         if (generation >= 300)
             running = false;
@@ -159,6 +143,29 @@ void CreateEntity(Map& _map, std::vector<std::vector<int>> _mapGrid, std::vector
 
         default:
             break;
+        }
+    }
+}
+
+void Reset(Map& _map, Player* _player)
+{
+    for (int y = 0; y < _map.GetHeight(); ++y)
+    {
+        for (int x = 0; x < _map.GetWidth(); ++x)
+        {
+            if (_map.GetTile(x, y) == TileType::Start)
+            {
+                _player->SetPosition(x, y);
+                if (SarsaController* sarsa = dynamic_cast<SarsaController*>(_player->GetController()))
+                {
+                    sarsa->steps = 0;
+                }
+                else if (QLearningController* qLearning = dynamic_cast<QLearningController*>(_player->GetController()))
+                {
+                    qLearning->steps = 0;
+                }
+
+            }
         }
     }
 }

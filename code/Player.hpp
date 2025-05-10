@@ -14,6 +14,10 @@ private:
 
 	Controller* controller = nullptr;
 
+	bool dead;
+
+	bool arrive;
+
 public:
 	Player(Map& _map);
 
@@ -23,7 +27,11 @@ public:
 
 	MovementComponent GetMovementComponent() { return movementComponent; }
 
-private:
+	void SetArrive(bool _arrive) { arrive = _arrive; }
+	bool GetArrive() { return arrive; }
+
+	void SetDead(bool _dead) { dead = _dead; }
+	bool GetDead() { return dead; }
 
 };
 

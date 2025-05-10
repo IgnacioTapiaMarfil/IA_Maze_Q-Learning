@@ -63,6 +63,8 @@ public:
                         sceneBuffer[y][x] = ' ';
                     else if (_map->GetGrid()[y][x] == TileType::Start)
                         sceneBuffer[y][x] = 'o';
+                    else if (_map->GetGrid()[y][x] == TileType::Goal)
+                        sceneBuffer[y][x] = 'X';
                 }
             }
         }

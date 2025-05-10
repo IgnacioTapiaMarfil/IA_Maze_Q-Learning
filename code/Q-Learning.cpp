@@ -37,15 +37,20 @@ void QLearningController::DoAction(Player& _player, Map& _map)
         reward = colisionReward;
 
     if (steps >= maxSteps)
+    {
         reward -= 100;
-
-    if (_map.GetTile(newX, newY) == TileType::Goal)
-        reward += goalReward;
+        _player.SetDead(true);
+    }
 
     if (nextState == previousState)
     {
-        reward += -2.0f;
-        std::cout << "Penalización por repetir posición\n";
+        reward += -0.4f;
+    }
+
+    if (_map.GetTile(newX, newY) == TileType::Goal)
+    {
+        reward += goalReward;
+        _player.SetArrive(true);
     }
 
     float currentQ = GetQValue(state, action);

@@ -37,15 +37,21 @@ void SarsaController::DoAction(Player& _player, Map& _map)
         reward = colisionReward;
     
     if (steps >= maxSteps)
+    {
         reward -=100;
+        _player.SetDead(true);
+    }
 
-    if (_map.GetTile(newX, newY) == TileType::Goal)
-        reward += goalReward;
 
     if (nextState == previousState)
     {
-        reward += -2.0f;
-        std::cout << "Penalización por repetir posición\n";
+        reward += -0.4f;
+    }
+
+    if (_map.GetTile(newX, newY) == TileType::Goal)
+    {
+        reward += goalReward;
+        _player.SetArrive(true);
     }
 
     // Elegir siguiente acción según épsilon-greedy desde el nuevo estado
