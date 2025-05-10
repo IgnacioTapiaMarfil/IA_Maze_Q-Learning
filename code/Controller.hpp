@@ -25,8 +25,16 @@ struct StateActionHash
 class Controller 
 {
 public:
+    int steps = 0;
+
     virtual ~Controller() = default;
     virtual void DoAction(Player& player, Map& _map) = 0;
+
+    virtual void LoadQTable(const std::string& mapName) = 0;
+    virtual void SaveQTable(const std::string& mapName) = 0;
+    
+    virtual float GetEpsilon() const = 0;
+    virtual void SetEpsilon(float _newEpsilon) = 0;
 };
 
 #endif

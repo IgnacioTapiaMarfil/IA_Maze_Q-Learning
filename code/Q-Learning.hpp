@@ -31,7 +31,6 @@ private:
     std::uniform_real_distribution<float> dist; //se usan para los numeros aleatorios en el e-greedy
 
 public:
-    int steps;
 
     QLearningController(float _learningRate, float _discountRate, float _goalReward, float _movementReward, float _colisionReward, int _maxSteps)
         : learningRate(_learningRate), discountRate(_discountRate), goalReward(_goalReward), movementReward(_movementReward), colisionReward(_colisionReward), maxSteps(_maxSteps)
@@ -45,7 +44,7 @@ public:
 
     void DoAction(Player& player, Map& _map) override;
 
-    void SetEpsilon(float _newEpsilon) { epsiolon = _newEpsilon; } float GetEpsilon() const { return epsiolon; }
+    void SetEpsilon(float _newEpsilon) override { epsiolon = _newEpsilon; } float GetEpsilon() const { return epsiolon; }
 
     //* funciones para cargar y guardar la table*//
     void SaveQTable(const std::string& mapName)
