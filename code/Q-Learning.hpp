@@ -1,6 +1,4 @@
-#pragma once
 #ifndef QLEARNING_H
-
 #define QLEARNING_H
 
 #include "Controller.hpp"

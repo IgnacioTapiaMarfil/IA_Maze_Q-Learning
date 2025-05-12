@@ -1,5 +1,4 @@
 #ifndef SARSA_H
-
 #define SARSA_H
 
 #include "Controller.hpp"
