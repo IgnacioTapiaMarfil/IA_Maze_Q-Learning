@@ -18,7 +18,7 @@ enum class Movments
 class RandomController : public Controller 
 {
 public:
-    void DoAction(Player& player, Map& _map) override
+    void DoAction(Player& player, Map& _map, std::vector<Entity*>& _entities) override
     {
         bool actionDone = false;
 

@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-void QLearningController::DoAction(Player& _player, Map& _map)
+void QLearningController::DoAction(Player& _player, Map& _map, std::vector<Entity*>& _entities)
 {
     int x = _player.GetX();
     int y = _player.GetY();
@@ -36,21 +36,43 @@ void QLearningController::DoAction(Player& _player, Map& _map)
     else
         reward = colisionReward;
 
+    if (_player.GetDead())
+    {
+        reward += dieReward;
+        std::cout << "Muerto\n";
+        reset = true;
+    }
+
+    if (_player.GetKill())
+    {
+        reward += killReward;
+        std::cout << "kill\n";
+        _player.SetKill(false);
+    }
+
+    if (_player.GetTreasureCached())
+    {
+        reward += treasureReward;
+        std::cout << "tesoro\n";
+        _player.SetTreasureCached(false);
+    }
+
     if (steps >= maxSteps)
     {
-        reward -= 100;
-        _player.SetDead(true);
+        reward += dieReward;
+        reset = true;
     }
 
     if (nextState == previousState)
     {
-        reward += -0.4f;
+        reward += goingBackReward;
     }
 
     if (_map.GetTile(newX, newY) == TileType::Goal)
     {
         reward += goalReward;
         _player.SetArrive(true);
+        reset = true;
     }
 
     float currentQ = GetQValue(state, action);
@@ -79,7 +101,7 @@ void QLearningController::DoAction(Player& _player, Map& _map)
 Action QLearningController::ChooseAction(State _state)
 {
 
-    if (dist(rng) < epsiolon)
+    if (dist(rng) < epsilon)
     {
         int random = rand() % 4;
         std::cout << "random \n";

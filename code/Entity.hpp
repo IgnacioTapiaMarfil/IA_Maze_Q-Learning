@@ -12,6 +12,8 @@ protected:
 
 	char symbol = '&';
 
+	bool active = false;
+
 public:
 	Entity(int startX, int startY, Map& _map);
 
@@ -21,6 +23,9 @@ public:
 	char GetStmbol() const{ return symbol; }
 
 	void SetPosition(int newX, int newY);
+
+	bool GetActive() { return active; }
+	void SetActive(bool _active) { active = _active; }
 
 	virtual void Update(Map& _map, std::vector<Entity*>& entities) {};
 

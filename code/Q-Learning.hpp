@@ -17,10 +17,14 @@ private:
 
     float learningRate;
     float discountRate;
-    float epsiolon = 0.8f;
+    float epsilon;
     float goalReward;
     float movementReward;
     float colisionReward;
+    float killReward;
+    float treasureReward;
+    float dieReward;
+    float goingBackReward;
 
     int maxSteps;
     State previousState = { -1, -1 };
@@ -32,8 +36,8 @@ private:
 
 public:
 
-    QLearningController(float _learningRate, float _discountRate, float _goalReward, float _movementReward, float _colisionReward, int _maxSteps)
-        : learningRate(_learningRate), discountRate(_discountRate), goalReward(_goalReward), movementReward(_movementReward), colisionReward(_colisionReward), maxSteps(_maxSteps)
+    QLearningController(float _learningRate, float _discountRate, float _goalReward, float _movementReward, float _colisionReward, float _epsilon, float _killReward, float _treasureReward, float _dieReward, float _goingBackReward, int _maxSteps)
+        : learningRate(_learningRate), discountRate(_discountRate), goalReward(_goalReward), movementReward(_movementReward), colisionReward(_colisionReward), epsilon(_epsilon), killReward(_killReward), treasureReward(_treasureReward), dieReward(_dieReward), goingBackReward(_goingBackReward), maxSteps(_maxSteps)
     {
         std::random_device rd;  //se usan para los numeros aleatorios en el e-greedy
         rng.seed(rd());
@@ -42,9 +46,9 @@ public:
     }
 
 
-    void DoAction(Player& player, Map& _map) override;
+    void DoAction(Player& player, Map& _map, std::vector<Entity*>& _entities) override;
 
-    void SetEpsilon(float _newEpsilon) override { epsiolon = _newEpsilon; } float GetEpsilon() const { return epsiolon; }
+    void SetEpsilon(float _newEpsilon) override { epsilon = _newEpsilon; } float GetEpsilon() const { return epsilon; }
 
     //* funciones para cargar y guardar la table*//
     void SaveQTable(const std::string& mapName)

@@ -14,9 +14,15 @@ private:
 
 	Controller* controller = nullptr;
 
+	int StartPosX, StarPosY;
+
 	bool dead;
 
+	bool kill;
+
 	bool arrive;
+
+	bool treasureCatched;
 
 public:
 	Player(Map& _map);
@@ -25,14 +31,24 @@ public:
 
 	void Update(Map& _map, std::vector<Entity*>& entities) override;
 
+	void Reset();
+
 	MovementComponent GetMovementComponent() { return movementComponent; }
 
 	void SetArrive(bool _arrive) { arrive = _arrive; }
-	bool GetArrive() { return arrive; }
+	bool GetArrive() const { return arrive; }
 
 	void SetDead(bool _dead) { dead = _dead; }
-	bool GetDead() { return dead; }
+	bool GetDead() const { return dead; }
 
+	void SetKill(bool _kill) { kill = _kill; }
+	bool GetKill() const { return kill; }
+
+	void SetTreasureCached(bool _treasureCached) { treasureCatched = _treasureCached; }
+	bool GetTreasureCached() const { return treasureCatched; }
+
+private:
+	void Fight(Entity* _enemy);
 };
 
 #endif // !PLAYER_H

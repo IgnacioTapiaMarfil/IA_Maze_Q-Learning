@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-void SarsaController::DoAction(Player& _player, Map& _map)
+void SarsaController::DoAction(Player& _player, Map& _map, std::vector<Entity*>& _entities)
 {
     int x = _player.GetX();
     int y = _player.GetY();
@@ -36,22 +36,43 @@ void SarsaController::DoAction(Player& _player, Map& _map)
     else
         reward = colisionReward;
     
-    if (steps >= maxSteps)
+    if (_player.GetDead())
     {
-        reward -=100;
-        _player.SetDead(true);
+        reward += dieReward;
+        std::cout << "Muerto\n";
+        reset = true;
     }
 
+    if (_player.GetKill())
+    {
+        reward += killReward;
+        std::cout << "kill\n";
+        _player.SetKill(false);
+    }
+
+    if (_player.GetTreasureCached())
+    {
+        reward += treasureReward;
+        std::cout << "tesoro\n";
+        _player.SetTreasureCached(false);
+    }
+
+    if (steps >= maxSteps)
+    {
+        reward += dieReward;
+        reset = true;
+    }
 
     if (nextState == previousState)
     {
-        reward += -0.4f;
+        reward += goingBackReward;
     }
 
     if (_map.GetTile(newX, newY) == TileType::Goal)
     {
         reward += goalReward;
         _player.SetArrive(true);
+        reset = true;
     }
 
     // Elegir siguiente acción según épsilon-greedy desde el nuevo estado
@@ -63,6 +84,7 @@ void SarsaController::DoAction(Player& _player, Map& _map)
     float tdError = reward + discountRate * nextQ - currentQ;
     float updatedQ = currentQ + learningRate * tdError;
 
+    std::cout << "valor = " << updatedQ << "\n";
     steps++;
 
     SetQValue(state, action, updatedQ);
@@ -74,14 +96,12 @@ void SarsaController::DoAction(Player& _player, Map& _map)
 Action SarsaController::ChooseAction(State _state)
 {
 
-    if (dist(rng) < epsiolon)
+    if (dist(rng) < epsilon)
     {
         int random = rand() % 4;
-        std::cout << "random \n" ;
         return static_cast<Action>(random);
     }
 
-    std::cout << "Select \n";
     float bestValue = -1e9; //numero muy pequeño se puede cambiar por -inf pero me da un problema con que inf sea const
 
     Action bestAction = Action::Up;

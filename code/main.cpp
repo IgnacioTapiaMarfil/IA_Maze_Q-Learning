@@ -19,8 +19,8 @@
 
 namespace fs = std::filesystem;
 
-void CreateEntity(Map& _map, std::vector<std::vector<int>> _mapGrid, std::vector<Entity*>& entities);
-void Reset(Map& _map, Player* _player);
+void CreateEntity(Map& _map, const std::vector<std::vector<int>>& _mapGrid, std::vector<Entity*>& entities);
+void Reset(Map& _map, Player* _player, std::vector<Entity*>& entities, const std::vector<std::vector<int>>& originalGrid);
 std:: string SelectMap();
 void Menu();
 void Game();
@@ -29,12 +29,16 @@ bool running = false;
 
 int   algorithmN = 0;
 
-float learningRate   = 0;
-float discountRate   = 0;
-float epsilon       = 0;
-float goalReward     = 0;
-float movementReward = 0;
+float learningRate    = 0;
+float discountRate    = 0;
+float epsilon         = 0;
+float goalReward      = 0;
+float movementReward  = 0;
 float collisionReward = 0;
+float killReward      = 0;
+float treasureReward  = 0;
+float dieReward       = 0;
+float goingBackReward = 0;
 
 int generation = 0;
 int goals = 0;
@@ -50,55 +54,51 @@ int main()
 }
 
 
-void CreateEntity(Map& _map, std::vector<std::vector<int>> _mapGrid, std::vector<Entity*>& entities)
+void CreateEntity(Map& _map, const std::vector<std::vector<int>>& _mapGrid, std::vector<Entity*>& entities)
 {
     std::vector<EntityStruct> entitiesStructs = FileReader::EntityCharger(_mapGrid);
 
     for (const auto& es : entitiesStructs)
     {
+        Entity* newEntity = nullptr;
+
         switch (es.value)
         {
         case 4:
-        {
-            Enemy* e = new Enemy(es.col, es.row, _map);
-            entities.push_back(e);
+            newEntity = new Enemy(es.col, es.row, _map);
             break;
-        }
 
         case 5:
-        {
-            Treasure* e = new Treasure(es.col, es.row, _map);
-            entities.push_back(e);
+            newEntity = new Treasure(es.col, es.row, _map);
             break;
-        }
 
         default:
             break;
         }
+
+        if (newEntity)
+        {
+            newEntity->SetActive(true);
+            entities.push_back(newEntity);
+        }
     }
 }
 
-void Reset(Map& _map, Player* _player)
+void Reset(Map& _map, Player* _player, std::vector<Entity*>& entities, const std::vector<std::vector<int>>& originalGrid)
 {
-    for (int y = 0; y < _map.GetHeight(); ++y)
+    // Desactivar todas las entidades menos el player
+    for (Entity* entity : entities)
     {
-        for (int x = 0; x < _map.GetWidth(); ++x)
-        {
-            if (_map.GetTile(x, y) == TileType::Start)
-            {
-                _player->SetPosition(x, y);
-                if (SarsaController* sarsa = dynamic_cast<SarsaController*>(_player->GetController()))
-                {
-                    sarsa->steps = 0;
-                }
-                else if (QLearningController* qLearning = dynamic_cast<QLearningController*>(_player->GetController()))
-                {
-                    qLearning->steps = 0;
-                }
-
-            }
-        }
+        entity->SetActive(true);
     }
+
+    _player->Reset();
+
+    if (auto* sarsa = dynamic_cast<SarsaController*>(_player->GetController()))
+        sarsa->steps = 0;
+    else if (auto* qLearning = dynamic_cast<QLearningController*>(_player->GetController()))
+        qLearning->steps = 0;
+
 }
 
 std::string SelectMap()
@@ -210,12 +210,16 @@ void Menu()
         }
     };
 
-    askValue("Enter learning rate", learningRate, true);
-    askValue("Enter discount rate", discountRate, true);
+    askValue("Enter learning rate (between 0 and 1)", learningRate, true);
+    askValue("Enter discount rate (between 0 and 1)", discountRate, true);
     askValue("Enter epsilon (between 0 and 1)", epsilon, true);
     askValue("Enter goal reward", goalReward);
     askValue("Enter movement reward", movementReward);
     askValue("Enter collision reward", collisionReward);
+    askValue("Enter kill reward", killReward);
+    askValue("Enter treasure reward", treasureReward);
+    askValue("Enter die reward", dieReward);
+    askValue("Enter goingBack reward", goingBackReward);
 }
 
 void Game()
@@ -231,9 +235,13 @@ void Game()
 
     std::vector<Entity*> entities;
 
+    std::vector<Entity*> toDelete;
+
     std::vector<Entity*> players;
 
     Player player1(map);
+
+    player1.SetActive(true);
 
     int maxSteps = 5000;
 
@@ -243,11 +251,11 @@ void Game()
     // Elegimos el controlador según algorithmN
     if (algorithmN == 1) // SARSA
     {
-        controller = new SarsaController(learningRate, discountRate, goalReward, movementReward, collisionReward, maxSteps);
+        controller = new SarsaController(learningRate, discountRate, goalReward, movementReward, collisionReward, epsilon, killReward, treasureReward, dieReward, goingBackReward, maxSteps);
     }
     else if (algorithmN == 2) // Q-Learning
     {
-        controller = new QLearningController(learningRate, discountRate, goalReward, movementReward, collisionReward, maxSteps);
+        controller = new QLearningController(learningRate, discountRate, goalReward, movementReward, collisionReward, epsilon, killReward, treasureReward, dieReward, goingBackReward, maxSteps);
     }
     else
     {
@@ -281,32 +289,34 @@ void Game()
         // Imprimimos el contenido de la escena
         std::cout << buffer.str();
 
-        if (player1.GetArrive())
-        {
-            player1.SetArrive(false);
-
-            Reset(map, &player1);
-
-            generation++;
-            goals++;
-
-            if (goals % 4 == 0 && controller->GetEpsilon() > 0.02f)
-            {
-                controller->SetEpsilon(controller->GetEpsilon() * 0.9f);
-            }
-        }
-        else if (player1.GetDead())
-        {
-            player1.SetDead(false);
-
-            Reset(map, &player1);
-
-            generation++;
-        }
-
         for (auto entiti : entities)
         {
-            entiti->Update(map, entities);
+            if(entiti->GetActive())
+                entiti->Update(map, entities);
+        }
+
+        if (controller->reset)
+        {
+            if (player1.GetArrive())
+            {
+                player1.SetArrive(false);
+
+                goals++;
+
+                if (goals % 4 == 0 && controller->GetEpsilon() > 0.02f)
+                {
+                    controller->SetEpsilon(controller->GetEpsilon() * 0.9f);
+                }
+            }
+
+            if (player1.GetDead())
+            {
+                player1.SetDead(false);
+            }
+
+            generation++;
+            Reset(map, &player1, entities, mapGrid);
+            controller->reset = false;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(0));

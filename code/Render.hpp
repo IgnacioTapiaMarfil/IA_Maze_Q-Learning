@@ -13,13 +13,11 @@ public:
 
     void RenderScene(Map* _map, const std::vector<Entity*>& _entities, std::ostringstream& buffer)
     {
-        // Si es la primera vez, creamos el mapa (lo guardamos en el buffer)
         static bool firstRender = true;
         static std::vector<std::vector<char>> sceneBuffer;
 
         if (firstRender)
         {
-            // Inicializamos el buffer de la escena con el mapa
             sceneBuffer.resize(_map->GetHeight(), std::vector<char>(_map->GetWidth(), ' '));
 
             for (int y = 0; y < _map->GetHeight(); ++y)
@@ -46,38 +44,34 @@ public:
                     }
                 }
             }
-            firstRender = false;  // El mapa ya se generó una vez
+            firstRender = false;
         }
 
-        // Limpiamos el buffer de salida
-        buffer.str("");
-        buffer.clear();
-
+        // Limpieza de entidades antiguas en el buffer (dejamos mapa intacto)
         for (int y = 0; y < _map->GetHeight(); ++y)
         {
             for (int x = 0; x < _map->GetWidth(); ++x)
             {
-                if (sceneBuffer[y][x] != ' ' && sceneBuffer[y][x] != '#' && sceneBuffer[y][x] != 'X' && sceneBuffer[y][x] != 'O' && sceneBuffer[y][x] != '.')
-                {
-                    if (_map->GetGrid()[y][x] == TileType::Floor)
-                        sceneBuffer[y][x] = ' ';
-                    else if (_map->GetGrid()[y][x] == TileType::Start)
-                        sceneBuffer[y][x] = 'o';
-                    else if (_map->GetGrid()[y][x] == TileType::Goal)
-                        sceneBuffer[y][x] = 'X';
-                }
+                // Si no es parte fija del mapa, limpiamos el carácter
+                if (sceneBuffer[y][x] != '#' && sceneBuffer[y][x] != 'X')
+                    sceneBuffer[y][x] = ' ';
             }
         }
 
-        // Luego, actualizamos las posiciones de las entidades en el buffer
+        // Dibujar entidades activas
         for (auto e : _entities)
         {
+            if (!e->GetActive()) continue;
+
             int entityX = e->GetX();
             int entityY = e->GetY();
             sceneBuffer[entityY][entityX] = e->GetStmbol();
         }
 
-        // Finalmente, imprimimos el buffer completo
+        // Volcar el buffer al string
+        buffer.str("");
+        buffer.clear();
+
         for (int y = 0; y < _map->GetHeight(); ++y)
         {
             for (int x = 0; x < _map->GetWidth(); ++x)
