@@ -9,7 +9,17 @@ void SarsaController::DoAction(Player& _player, Map& _map, std::vector<Entity*>&
 
     State state = { x, y };
 
-    Action action = ChooseAction(state);
+    Action action;
+
+    if (firstIteration)
+    {
+        action = ChooseAction(state);
+        firstIteration = false;
+    }
+    else
+    {
+        action = nextAction;
+    }
 
     bool moved = false;
     MovementComponent movement = _player.GetMovementComponent();
@@ -75,8 +85,7 @@ void SarsaController::DoAction(Player& _player, Map& _map, std::vector<Entity*>&
         reset = true;
     }
 
-    // Elegir siguiente acción según épsilon-greedy desde el nuevo estado
-    Action nextAction = ChooseAction(nextState);
+    nextAction = ChooseAction(nextState);
 
     float currentQ = GetQValue(state, action);
     float nextQ = GetQValue(nextState, nextAction);
@@ -90,7 +99,6 @@ void SarsaController::DoAction(Player& _player, Map& _map, std::vector<Entity*>&
     SetQValue(state, action, updatedQ);
 
     previousState = state;
-
 }
 
 Action SarsaController::ChooseAction(State _state)

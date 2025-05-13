@@ -27,6 +27,8 @@ private:
     int maxSteps;
 
     State previousState;
+    Action nextAction;
+
 
     std::unordered_map<std::pair<State, Action>, float, StateActionHash> qTable;
 
@@ -34,6 +36,7 @@ private:
     std::uniform_real_distribution<float> dist; //se usan para los numeros aleatorios en el e-greedy
 
 public:
+    bool firstIteration;
 
     SarsaController(float _learningRate, float _discountRate, float _goalReward, float _movementReward, float _colisionReward, float _epsilon, float _killReward, float _treasureReward, float _dieReward, float _goingBackReward, int _maxSteps)
         : learningRate(_learningRate), discountRate(_discountRate), goalReward(_goalReward), movementReward(_movementReward), colisionReward(_colisionReward), epsilon(_epsilon), killReward(_killReward), treasureReward(_treasureReward), dieReward(_dieReward), goingBackReward(_goingBackReward), maxSteps(_maxSteps)
@@ -42,6 +45,8 @@ public:
         rng.seed(rd());
 
         steps = 0;
+
+        firstIteration = true;
     }
 
 

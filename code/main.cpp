@@ -95,7 +95,10 @@ void Reset(Map& _map, Player* _player, std::vector<Entity*>& entities, const std
     _player->Reset();
 
     if (auto* sarsa = dynamic_cast<SarsaController*>(_player->GetController()))
+    {
         sarsa->steps = 0;
+        sarsa->firstIteration = true;
+    }
     else if (auto* qLearning = dynamic_cast<QLearningController*>(_player->GetController()))
         qLearning->steps = 0;
 
