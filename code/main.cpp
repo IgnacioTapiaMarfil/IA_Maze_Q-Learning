@@ -43,7 +43,7 @@ float goingBackReward   = 0;
 int generation          = 0;
 int goals               = 0;
 
-int secondsDelay        = 0;
+float secondsDelay        = 0;
 
 std::string mapSrc;
 
@@ -224,6 +224,7 @@ void Menu()
     askValue("Enter treasure reward", treasureReward);
     askValue("Enter die reward", dieReward);
     askValue("Enter goingBack reward", goingBackReward);
+    askValue("Simulation Speed, lower number, higer speed", secondsDelay);
 }
 
 void Game()
@@ -323,7 +324,7 @@ void Game()
             controller->reset = false;
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(secondsDelay));
+        std::this_thread::sleep_for(std::chrono::milliseconds(std::abs((int)secondsDelay)));
 
         if (generation >= 300)
             running = false;

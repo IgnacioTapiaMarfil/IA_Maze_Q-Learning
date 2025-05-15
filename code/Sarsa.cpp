@@ -151,7 +151,7 @@ void SarsaController::SetQValue(const State& _state, Action _action, float value
 //* funciones para cargar y guardar la table*//
 void SarsaController::SaveQTable(const std::string& mapName)
 {
-    std::ofstream file(mapName + "_qtable.txt");
+    std::ofstream file(mapName + "_qtable_Sarsa.txt");
 
     if (!file.is_open())
     {
@@ -174,7 +174,7 @@ void SarsaController::SaveQTable(const std::string& mapName)
 
 void SarsaController::LoadQTable(const std::string& mapName)
 {
-    std::ifstream file(mapName + "_qtable.txt");
+    std::ifstream file(mapName + "_qtable_Sarsa.txt");
 
     if (!file.is_open()) 
     {

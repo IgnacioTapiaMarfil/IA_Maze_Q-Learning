@@ -149,7 +149,7 @@ void QLearningController::SetQValue(const State& _state, Action _action, float v
 
 void QLearningController::SaveQTable(const std::string& mapName)
 {
-    std::ofstream file(mapName + "_qtable.txt");
+    std::ofstream file(mapName + "_qtable_Q_learning.txt");
 
     if (!file.is_open())
     {
@@ -172,7 +172,7 @@ void QLearningController::SaveQTable(const std::string& mapName)
 
 void QLearningController::LoadQTable(const std::string& mapName)
 {
-    std::ifstream file(mapName + "_qtable.txt");
+    std::ifstream file(mapName + "_qtable_Q_learning.txt");
 
     if (!file.is_open()) 
     {
