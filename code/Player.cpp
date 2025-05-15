@@ -17,6 +17,12 @@ Player::Player(Map& _map) : Entity(0,0, _map), movementComponent(*this, _map)
 
     treasureCatched = false;
 
+    treasuresCaught         = 0;
+    totalTreasuresCaught    = 0;
+    enemiesKilled           = 0;
+    totalEnemiesKilled      = 0;
+    deaths                  = 0;
+
     for (int y = 0; y < _map.GetHeight(); ++y) 
     {
         for (int x = 0; x < _map.GetWidth(); ++x) 
@@ -50,6 +56,8 @@ void Player::Update(Map& _map, std::vector<Entity*>& _entities)
             else if (Treasure* treasure = dynamic_cast<Treasure*>(_entities[i]))
             {
                 treasureCatched = true;
+                treasuresCaught++;
+                totalTreasuresCaught++;
 
                 _entities[i]->SetActive(false);
             }
@@ -70,6 +78,9 @@ void Player::Reset()
     arrive = false;
 
     treasureCatched = false;
+
+    treasuresCaught = 0;
+    enemiesKilled = 0;
 }
 
 void Player::Fight(Entity* _enemy)
@@ -84,9 +95,12 @@ void Player::Fight(Entity* _enemy)
     {
         _enemy->SetActive(false);
         kill = true;
+        enemiesKilled++;
+        totalEnemiesKilled++;
     }
     else
     {
         dead = true;
+        deaths++;
     }
 }

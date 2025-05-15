@@ -23,6 +23,10 @@ private:
 
 	bool treasureCatched;
 
+	int enemiesKilled, treasuresCaught, deaths;
+	int totalEnemiesKilled, totalTreasuresCaught;
+
+
 public:
 	Player(Map& _map);
 
@@ -45,6 +49,12 @@ public:
 
 	void SetTreasureCached(bool _treasureCached) { treasureCatched = _treasureCached; }
 	bool GetTreasureCached() const { return treasureCatched; }
+
+	int GetEnemiesKilled()  const { return enemiesKilled; }
+	int GetTotalEnemiesKilled()  const { return totalEnemiesKilled; }
+	int GetTreasuresCaught() const { return treasuresCaught; }
+	int GetTotalTreasuresCaught() const { return totalTreasuresCaught; }
+	int GetDeaths() const { return deaths; }
 
 private:
 	void Fight(Entity* _enemy);

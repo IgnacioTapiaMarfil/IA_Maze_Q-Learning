@@ -29,19 +29,21 @@ bool running = false;
 
 int   algorithmN = 0;
 
-float learningRate    = 0;
-float discountRate    = 0;
-float epsilon         = 0;
-float goalReward      = 0;
-float movementReward  = 0;
-float collisionReward = 0;
-float killReward      = 0;
-float treasureReward  = 0;
-float dieReward       = 0;
-float goingBackReward = 0;
+float learningRate      = 0;
+float discountRate      = 0;
+float epsilon           = 0;
+float goalReward        = 0;
+float movementReward    = 0;
+float collisionReward   = 0;
+float killReward        = 0;
+float treasureReward    = 0;
+float dieReward         = 0;
+float goingBackReward   = 0;
 
-int generation = 0;
-int goals = 0;
+int generation          = 0;
+int goals               = 0;
+
+int secondsDelay        = 0;
 
 std::string mapSrc;
 
@@ -287,10 +289,14 @@ void Game()
         // Limpiar solo el área de la escena (opcional)
         std::cout << "\033[H\033[J";  // Esto borra la consola
 
-        std::cout << "Goals: " << goals << " | Generacion: " << generation << " | Pasos: " << controller->steps << " | Epsilon: " << controller->GetEpsilon() << std::endl;
+        std::cout << "Goals: " << goals << " | Generacion: " << generation << " | Pasos: " << controller->steps << " | Epsilon: " << controller->GetEpsilon() << " | Enemies Killed: " << player1.GetEnemiesKilled() << " | Treasures Caught: " << player1.GetTreasuresCaught() << " | Deaths: " << player1.GetDeaths() << std::endl;
+        std::cout << "Enemies Killed: " << player1.GetEnemiesKilled() << " | Treasures Caught: " << player1.GetTreasuresCaught() << " | Deaths: " << player1.GetDeaths() << std::endl;
 
         // Imprimimos el contenido de la escena
         std::cout << buffer.str();
+
+        std::cout << "Data" << std::endl;
+        std::cout << "Total Enemies Killed: " << player1.GetTotalEnemiesKilled() << " | Total Treasures Caught: " << player1.GetTotalTreasuresCaught() << std::endl;
 
         for (auto entiti : entities)
         {
@@ -322,7 +328,7 @@ void Game()
             controller->reset = false;
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(secondsDelay));
 
         if (generation >= 300)
             running = false;
