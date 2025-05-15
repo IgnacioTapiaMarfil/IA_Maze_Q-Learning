@@ -283,10 +283,9 @@ void Game()
 
         render.RenderScene(&map, entities, buffer);
 
-        std::cout << "\033[H\033[J";
+        std::cout << "\033[H\033[J" << std::flush;
 
         std::cout << "Goals: " << goals << " | Generacion: " << generation << " | Pasos: " << controller->steps << " | Epsilon: " << controller->GetEpsilon() << " | Enemies Killed: " << player1.GetEnemiesKilled() << " | Treasures Caught: " << player1.GetTreasuresCaught() << " | Deaths: " << player1.GetDeaths() << std::endl;
-        std::cout << "Enemies Killed: " << player1.GetEnemiesKilled() << " | Treasures Caught: " << player1.GetTreasuresCaught() << " | Deaths: " << player1.GetDeaths() << std::endl;
 
         std::cout << buffer.str();
 

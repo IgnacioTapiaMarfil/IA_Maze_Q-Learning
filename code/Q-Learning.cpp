@@ -174,7 +174,8 @@ void QLearningController::LoadQTable(const std::string& mapName)
 {
     std::ifstream file(mapName + "_qtable.txt");
 
-    if (!file.is_open()) {
+    if (!file.is_open()) 
+    {
         std::cerr << "Error al cargar la Q-table\n";
         return;
     }
