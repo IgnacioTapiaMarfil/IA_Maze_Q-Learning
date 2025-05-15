@@ -28,8 +28,6 @@ std::vector<std::vector<int>> FileReader::MapCharger(const std::string& src)
         {
             if (c >= '0' && c <= '9') 
             {
-                /*if (c != '0' && c != '1' && c != '2' && c != '3')
-                    c = '0';*/
                 row.push_back(c - '0');
             }
         }
@@ -67,8 +65,6 @@ std::vector<EntityStruct> FileReader::EntityCharger(const std::vector<std::vecto
         {
             if (_map[row][col] >= 4 && _map[row][col] <= 9)
             {
-                std::cout << row << ", " << col << ", " << std::endl;
-
                 entities.push_back(EntityStruct(_map[row][col], row, col));
             }
         }

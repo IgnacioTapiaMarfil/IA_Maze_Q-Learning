@@ -109,7 +109,7 @@ Action QLearningController::ChooseAction(State _state)
     }
 
     std::cout << "Select \n";
-    float bestValue = -1e9; //numero muy pequeño se puede cambiar por -inf pero me da un problema con que inf sea const
+    float bestValue = -1e9;
 
     Action bestAction = Action::Up;
 
@@ -144,4 +144,49 @@ void QLearningController::SetQValue(const State& _state, Action _action, float v
 {
     auto key = std::make_pair(_state, _action);
     qTable[key] = value;
+}
+
+
+void QLearningController::SaveQTable(const std::string& mapName)
+{
+    std::ofstream file(mapName + "_qtable.txt");
+
+    if (!file.is_open())
+    {
+        std::cout << "Error al guardar la Q-table\n";
+        return;
+    }
+
+    for (const auto& pair : qTable)
+    {
+        State s = pair.first.first;
+        int action = static_cast<int>(pair.first.second);
+        float value = pair.second;
+
+        file << s.first << " " << s.second << " " << action << " " << value << "\n";
+    }
+
+    std::cout << "archivo creado";
+    file.close();
+}
+
+void QLearningController::LoadQTable(const std::string& mapName)
+{
+    std::ifstream file(mapName + "_qtable.txt");
+
+    if (!file.is_open()) {
+        std::cerr << "Error al cargar la Q-table\n";
+        return;
+    }
+
+    int x, y, actionInt;
+    float q;
+    while (file >> x >> y >> actionInt >> q)
+    {
+        State s = { x, y };
+        Action a = static_cast<Action>(actionInt);
+        qTable[{s, a}] = q;
+    }
+
+    file.close();
 }

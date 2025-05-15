@@ -19,7 +19,6 @@ struct StateActionHash
         return std::hash<int>()(k.first.first)
             ^ std::hash<int>()(k.first.second << 2)
             ^ std::hash<int>()(static_cast<int>(k.second) << 4);
-        // desplazo 2 y 4 bits la Y y la accion para distingir mas unos EstadoAccion de otros
     }
 };
 

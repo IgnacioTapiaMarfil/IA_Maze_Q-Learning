@@ -13,7 +13,7 @@ private:
 
 	Controller* controller = nullptr;
 
-	int StartPosX, StarPosY;
+	int StartPosX = 0, StarPosY = 0;
 
 	bool dead;
 

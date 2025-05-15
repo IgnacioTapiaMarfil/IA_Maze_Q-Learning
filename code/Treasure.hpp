@@ -7,13 +7,11 @@
 class Treasure : public Entity
 {
 
-private:
-
-
 public:
-	Treasure(int startX, int startY, Map& map);
-
-private:
+	Treasure(int startX, int startY, Map& map) : Entity(startX, startY, map)
+	{
+		symbol = '$';
+	};
 
 };
 

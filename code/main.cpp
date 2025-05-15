@@ -88,7 +88,6 @@ void CreateEntity(Map& _map, const std::vector<std::vector<int>>& _mapGrid, std:
 
 void Reset(Map& _map, Player* _player, std::vector<Entity*>& entities, const std::vector<std::vector<int>>& originalGrid)
 {
-    // Desactivar todas las entidades menos el player
     for (Entity* entity : entities)
     {
         entity->SetActive(true);
@@ -112,7 +111,6 @@ std::string SelectMap()
     const fs::path folderPath = "../../../resources";
     std::regex mapPattern(R"(Map_\d+\.txt)");
 
-    // Recoger todos los archivos válidos
     for (const auto& entry : fs::directory_iterator(folderPath))
     {
         if (entry.is_regular_file() && std::regex_match(entry.path().filename().string(), mapPattern))
@@ -124,18 +122,18 @@ std::string SelectMap()
     if (mapFiles.empty())
     {
         std::cout << "No maps found in ../../../resources" << std::endl;
-        exit(1); // Puedes lanzar una excepción si prefieres
+        exit(1);
     }
 
-
-    // Selección del usuario
     int choice = 0;
+
     while (true)
     {
         std::cout << "\033[H\033[J";
         // Mostrar lista
         std::cout << "MAZE - Q-LEARNING / SARSA\n\n";
         std::cout << "Available Maps:\n\n";
+
         for (size_t i = 0; i < mapFiles.size(); ++i)
         {
             std::cout << i + 1 << ": " << mapFiles[i].filename().string() << "\n";
@@ -188,14 +186,15 @@ void Menu()
         }
     }
 
-    // Input for each float parameter
     auto askValue = [](const std::string& prompt, float& var, bool restrictTo01 = false)
     {
         while (true)
         {
             std::cout << "\033[H\033[J";
             std::cout << "MAZE - Q-LEARNING / SARSA\n\n";
-            std::cout << prompt << ": ";
+            std::cout << prompt;
+            if (restrictTo01) std::cout << " (must be between 0 and 1)";
+            std::cout << ": ";
             std::cin >> var;
 
             if (std::cin.fail() || (restrictTo01 && (var < 0.0f || var > 1.0f)))
@@ -215,9 +214,9 @@ void Menu()
         }
     };
 
-    askValue("Enter learning rate (between 0 and 1)", learningRate, true);
-    askValue("Enter discount rate (between 0 and 1)", discountRate, true);
-    askValue("Enter epsilon (between 0 and 1)", epsilon, true);
+    askValue("Enter learning rate", learningRate, true);
+    askValue("Enter discount rate", discountRate, true);
+    askValue("Enter epsilon", epsilon, true);
     askValue("Enter goal reward", goalReward);
     askValue("Enter movement reward", movementReward);
     askValue("Enter collision reward", collisionReward);
@@ -250,10 +249,8 @@ void Game()
 
     int maxSteps = 5000;
 
-    // Declaramos el puntero controller de tipo Controller
     Controller* controller = nullptr;
 
-    // Elegimos el controlador según algorithmN
     if (algorithmN == 1) // SARSA
     {
         controller = new SarsaController(learningRate, discountRate, goalReward, movementReward, collisionReward, epsilon, killReward, treasureReward, dieReward, goingBackReward, maxSteps);
@@ -264,7 +261,7 @@ void Game()
     }
     else
     {
-        return;  // Si no es ni 1 ni 2, salimos de la función
+        return;
     }
 
     controller->LoadQTable(mapSrc);
@@ -286,16 +283,15 @@ void Game()
 
         render.RenderScene(&map, entities, buffer);
 
-        // Limpiar solo el área de la escena (opcional)
-        std::cout << "\033[H\033[J";  // Esto borra la consola
+        std::cout << "\033[H\033[J";
 
         std::cout << "Goals: " << goals << " | Generacion: " << generation << " | Pasos: " << controller->steps << " | Epsilon: " << controller->GetEpsilon() << " | Enemies Killed: " << player1.GetEnemiesKilled() << " | Treasures Caught: " << player1.GetTreasuresCaught() << " | Deaths: " << player1.GetDeaths() << std::endl;
         std::cout << "Enemies Killed: " << player1.GetEnemiesKilled() << " | Treasures Caught: " << player1.GetTreasuresCaught() << " | Deaths: " << player1.GetDeaths() << std::endl;
 
-        // Imprimimos el contenido de la escena
         std::cout << buffer.str();
 
-        std::cout << "Data" << std::endl;
+        std::cout << "Data\n";
+        std::cout << "-------------------\n";
         std::cout << "Total Enemies Killed: " << player1.GetTotalEnemiesKilled() << " | Total Treasures Caught: " << player1.GetTotalTreasuresCaught() << std::endl;
 
         for (auto entiti : entities)

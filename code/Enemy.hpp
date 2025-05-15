@@ -7,13 +7,11 @@
 class Enemy : public Entity
 {
 
-private:
-
-
 public:
-	Enemy(int startX, int startY, Map& map);
-
-private:
+	Enemy(int startX, int startY, Map& map): Entity(startX, startY, map)
+	{
+		symbol = '$';
+	};
 
 };
 

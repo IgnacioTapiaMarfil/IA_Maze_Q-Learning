@@ -5,8 +5,6 @@
 
 Entity::Entity(int startX, int startY, Map& _map) : x(startX), y(startY)
 {
-    //* Para que si se genera la entidad en una pared busque el suelo mas cercano*//
-
     if (_map.IsWalkable(startX, startY))
     {
         x = startX;
